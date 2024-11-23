@@ -1,0 +1,80 @@
+@surely_static path \
+    *.js *.css \
+    *.png *.svg *.ico \
+    *.woff *.woff2 *.ttf *.otf \
+    *.gz *.xz *.tar \
+    *.pdf
+
+handle @surely_static {
+    map {host} {kernel} {
+        *.xn--80ahspbmm.xn--d1auf2d.xn--c1avg *.docs.kernel.org
+        *.xn--c1aejinq1d.xn--d1auf2d.xn--c1avg *.wiki.kernel.org
+        xn--b1aaa.xn--80ahspbmm.xn--d1auf2d.xn--c1avg www.docs.kernel.org
+        xn--b1aaa.xn--c1aejinq1d.xn--d1auf2d.xn--c1avg www.wiki.kernel.org
+        xn--b1assd3ddcd.xn--80aanhijij5a.xn--d1auf2d.xn--c1avg am.mirrors.kernel.org
+        xn--h1aagkerh5b.xn--80ayp.xn--d1auf2d.xn--c1avg ams.source.kernel.org
+        xn--80aiapxhn.xn--d1auf2d.xn--c1avg android.kernel.org
+        xn--80asby.xn--80a4a.xn--d1auf2d.xn--c1avg ap.edge.kernel.org
+        xn--80aer5aza.xn--d1auf2d.xn--c1avg archive.kernel.org
+        xn--80ahspbmm.xn--4-9sb.xn--d1auf2d.xn--c1avg b4.docs.kernel.org
+        xn--80ahspbmm.xn--90aoa5agdq.xn--d1auf2d.xn--c1avg btrfs.docs.kernel.org
+        xn--80abgqfs6c.xn--d1auf2d.xn--c1avg bugzilla.kernel.org
+        xn--80aallhm0bu9b.xn--d1auf2d.xn--c1avg cdn.kernel.org
+        xn--d1acabjd8adbhlo6c.xn--c1adkf4ap.xn--d1auf2d.xn--c1avg cregit.origin.kernel.org
+        xn--80ahspbmm.xn--k1alm.xn--d1auf2d.xn--c1avg cxl.docs.kernel.org
+        xn--h1aagkerh5b.xn--b1ad2c.xn--d1auf2d.xn--c1avg dfw.source.kernel.org
+        xn--80ahspbmm.xn--d1auf2d.xn--c1avg docs.kernel.org
+        xn--80ahspbmm.xn--80ajijrlkcdz2a1e9a.xn--d1auf2d.xn--c1avg erofs.docs.kernel.org
+        xn--80apgojn8e.xn--d1auf2d.xn--c1avg erol.kernel.org
+        xn--80asby.xn--80adij8aamj2j.xn--d1auf2d.xn--c1avg eu.edge.kernel.org
+        xn--80aehch2a3a6c.xn--d1auf2d.xn--c1avg git.kernel.org
+        xn--80ahspbmm.xn--1394-u4daav.xn--d1auf2d.xn--c1avg ieee1394.docs.kernel.org
+        xn--d1auf2d.xn--c1avg kernel.org
+        xn--80ahspbmm.xn----8sba3akbdr5agpf.xn--d1auf2d.xn--c1avg linux-mmp.docs.kernel.org
+        xn--h1aebjvk.xn--d1auf2d.xn--c1avg linux.kernel.org
+        xn--80awq1d.xn--d1auf2d.xn--c1avg lkml.kernel.org
+        xn--80ahdgr4c5a.xn--d1auf2d.xn--c1avg lore.kernel.org
+        xn--80a1acny.xn--d1auf2d.xn--c1avg mail.kernel.org
+        xn--80akhnkcu5bxci.xn--h1aho.xn--d1auf2d.xn--c1avg media.social.kernel.org
+        xn--80asby.xn--80ajfng1a.xn--d1auf2d.xn--c1avg mirrors.edge.kernel.org
+        xn--80aanhqh6a.xn--d1auf2d.xn--c1avg mirrors.kernel.org
+        xn--80asby.xn--80az.xn--d1auf2d.xn--c1avg na.edge.kernel.org
+        xn--80ahdgr4c5a.xn--m1adag.xn--d1auf2d.xn--c1avg nntp.lore.kernel.org
+        xn----jtbidfarksl9iya.xn--80aanhqh6a.xn--d1auf2d.xn--c1avg ny.mirrors.kernel.org
+        xn--h1aagkerh5b.xn--j1afs.xn--d1auf2d.xn--c1avg nyc.source.kernel.org
+        xn--80aaag4ajh8brk.xn--d1auf2d.xn--c1avg pad.kernel.org
+        xn--80ahspbmm.xn--80amf0ag.xn--d1auf2d.xn--c1avg parisc.docs.kernel.org
+        xn--80aaxtisg2a.xn--d1auf2d.xn--c1avg patchwork.kernel.org
+        xn--d1aih0f.xn--d1auf2d.xn--c1avg people.kernel.org
+        xn--80aaowljz.xn--d1auf2d.xn--c1avg planet.kernel.org
+        xn--80ahdgr4c5a.xn--h1afgcccbjlkf9l.xn--d1auf2d.xn--c1avg pop.lore.kernel.org
+        xn--80aja0bccft8b.xn--d1auf2d.xn--c1avg remail.kernel.org
+        xn--h1aagkerh5b.xn--80afg7b0a.xn--d1auf2d.xn--c1avg sin.source.kernel.org
+        xn--o1aaaa.xn--d1auf2d.xn--c1avg smtp.kernel.org
+        xn--80ahdgr4c5a.xn--o1aaaa.xn--d1auf2d.xn--c1avg smtp.lore.kernel.org
+        xn--d1acugdbsi.xn--o1aaaa.xn--d1auf2d.xn--c1avg smtp.subspace.kernel.org
+        xn--1-2tbaaa.xn--d1auf2d.xn--c1avg smtp1.kernel.org
+        xn--2-2tbaaa.xn--d1auf2d.xn--c1avg smtp2.kernel.org
+        xn--3-2tbaaa.xn--d1auf2d.xn--c1avg smtp3.kernel.org
+        xn--80apehkcu5bxci.xn--d1auf2d.xn--c1avg social.kernel.org
+        xn--d1abblj7a.xn--80ahspbmm.xn--d1auf2d.xn--c1avg sparse.docs.kernel.org
+        xn--d1acugdbsi.xn--d1auf2d.xn--c1avg subspace.kernel.org
+        xn--80aanhqh6a.xn--e1aafur0g.xn--d1auf2d.xn--c1avg sv.mirrors.kernel.org
+        xn--80asw.xn--80aapc2bmnf.xn--d1auf2d.xn--c1avg sy.mirrors.kernel.org
+        xn--j1adjq.xn--d1auf2d.xn--c1avg vger.kernel.org
+        xn--c1aejinq1d.xn--d1auf2d.xn--c1avg wiki.kernel.org
+        xn--90acgcc1cebgkj1k.xn--80ahspbmm.xn--d1auf2d.xn--c1avg wireless.docs.kernel.org
+        xn--80aimyg.xn--d1auf2d.xn--c1avg wireless.kernel.org
+        xn--b1aaa.xn--d1auf2d.xn--c1avg www.kernel.org
+        xn--80aer5aza.xn--k1a1b.xn--d1auf2d.xn--c1avg yul.archive.kernel.org
+        default ""
+    }
+
+    @known_host expression {kernel} != ""
+
+    redir @known_host https://{kernel}{uri} permanent
+}
+
+# TOOO: cache by path for 30 minutes
+
+reverse_proxy {args[0]}

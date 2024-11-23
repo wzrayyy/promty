@@ -1,0 +1,6 @@
+reverse_proxy {
+    to {args[0]}
+    lb_policy least_conn
+}
+
+# TODO: infinite cache by path+body

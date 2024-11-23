@@ -1,0 +1,10 @@
+https://, ядро.орг, *.ядро.орг {
+	tls internal
+    encode gzip zstd
+
+    import Caddyfile.yadro localhost:8000
+}
+
+http://localhost:9000 {
+    import Caddyfile.puppies localhost:9001-9010
+}
