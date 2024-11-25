@@ -1,0 +1,10 @@
+services:
+  puppies:
+    build: puppy
+    ports:
+      - "2390:80"
+    stop_signal: SIGINT
+    deploy:
+      mode: replicated
+      replicas: 30
+      endpoint_mode: vip
