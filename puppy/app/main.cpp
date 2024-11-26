@@ -1,4 +1,4 @@
-﻿#include "httplib.hpp"
+#include "httplib.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -60,11 +60,27 @@ class WebServer {
     std::mutex m_global_lock;
 
   private:
-    void TranslateHandler(const httplib::Request &req, httplib::Response &res) {
-        std::lock_guard _(m_global_lock);
+    int TranslateHtml(const std::string &text, httplib::Response &res) {
+        const auto ft = PromtFTManager::FileType::kHTML;
+        auto direction = m_doc.direction();
+        auto translator = m_ftman.Translator(ft, direction);
+        {
+            std::ofstream ofs(TMP_IN);
+            ofs << text;
+        }
+        translator.Translate(TMP_IN, TMP_OUT);
+        res.set_content(read_file(TMP_OUT), "text/html");
 
-        auto target_dir_it = req.headers.find("x-translation-direction");
-        if (target_dir_it != req.headers.end()) {
+    }
+
+    void TranslateText(const std::string &text, httplib::Response &res) {
+        res.set_content("Plain text translation not implemented", "text/plain");
+        res.status = 400;
+    }
+
+    bool SetDirection(const httplib::Headers &headers, httplib::Response &res) {
+        const auto target_dir_it = headers.find("x-translation-direction");
+        if (target_dir_it != headers.end()) {
             auto target_dir = target_dir_it->second;
             if (target_dir == "en-ru")
                 m_doc.direction(PromtCtlDocument::Direction::kEngRus);
@@ -74,40 +90,39 @@ class WebServer {
                 res.set_content("X-Translation-Direction must be one of: [\"en-ru\", \"ru-en\"]",
                                 "text/plain");
                 res.status = 400;
-                return;
+                return false;
             }
         } else
             m_doc.direction(PromtCtlDocument::Direction::kEngRus);
 
-        auto content_type_it = req.headers.find("content-type");
-        if (content_type_it == req.headers.end()) {
-            res.set_content("Missing Content-Type header", "text/plain");
+        return true;
+    }
+
+    void TranslateHandler(const httplib::Request &req, httplib::Response &res) {
+        const std::lock_guard lock(m_global_lock);
+
+        if (!SetDirection(req.headers, res))
+            return;
+
+        const auto &body = req.body;
+        if (body.empty()) {
+            res.set_content("Request body must not be empty", "text/plain");
             res.status = 400;
+            return;
+        }
+
+        const auto content_type_it = req.headers.find("content-type");
+        if (content_type_it == req.headers.end()) {
+            TranslateText(body, res);
             return;
         }
 
         auto content_type = content_type_it->second;
-        PromtFTManager::FileType ft;
+
         if (content_type == "text/html")
-            ft = PromtFTManager::FileType::kHTML;
-        else {
-            res.set_content("Can't translate this content type", "text/plain");
-            res.status = 400;
-            return;
-        }
-
-        auto direction = m_doc.direction();
-        auto translator = m_ftman.Translator(ft, direction);
-
-        auto hash = std::to_string(std::hash<std::string>{}(req.body));
-
-        {
-            std::ofstream ofs(TMP_IN);
-            ofs << req.body;
-        }
-
-        translator.Translate(TMP_IN, TMP_OUT);
-        res.set_content(read_file(TMP_OUT), content_type);
+            TranslateHtml(body, res);
+        else
+            TranslateText(body, res);
     }
 
   public:
