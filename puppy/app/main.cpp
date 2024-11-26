@@ -4,6 +4,7 @@
 #include <fstream>
 #include <functional>
 #include <mutex>
+#include <csignal>
 #include <string>
 #include <windows.h>
 #include <wingdi.h>
@@ -11,14 +12,6 @@
 #include "PromtCtlDocument.hpp"
 #include "PromtFTManager.hpp"
 
-// TODO: remove
-template<typename T>
-void print(T arg) {
-    std::cout << arg << std::endl;
-}
-
-static const char CACHE_FOLDER[] = "C:\\cache\\";
-static const char TMP_FOLDER[] = "C:\\tmpfs\\";
 
 static inline std::string random_filename(int len = 65) {
     static const char ASCII_PRINTABLE[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'A', 'B', 'C', 'D', 'E', 'F',
@@ -31,8 +24,12 @@ static inline std::string random_filename(int len = 65) {
     std::string random_string;
     for (std::size_t i = 0; i < len; ++i)
         random_string += ASCII_PRINTABLE[distribution(generator)];
-    return TMP_FOLDER + random_string;
+    return random_string;
 }
+
+static const char TMP_FOLDER[] = "C:\\tmpfs\\";
+static const auto TMP_IN = TMP_FOLDER + random_filename();
+static const auto TMP_OUT = TMP_FOLDER + random_filename();
 
 // https://www.linux.org.ru/forum/development/3968525?cid=3971135
 static inline size_t cp1251_to_utf8(const char *in, char *out = nullptr) {
@@ -104,7 +101,6 @@ class WebServer {
   private:
     void TranslateHandler(const httplib::Request &req, httplib::Response &res) {
         std::lock_guard _(m_global_lock);
-        print("got request");
 
         auto target_dir_it = req.headers.find("x-translation-direction");
         if (target_dir_it != req.headers.end()) {
@@ -144,38 +140,25 @@ class WebServer {
         auto translator = m_ftman.Translator(ft, direction);
 
         auto hash = std::to_string(std::hash<std::string>{}(req.body));
-        auto translated_file = CACHE_FOLDER + hash;
-        print(CACHE_FOLDER);
-        print(hash);
-        print(translated_file);
 
-        if (std::filesystem::exists(translated_file))
-            std::remove(translated_file.c_str());
-        if (!std::filesystem::exists(translated_file)) {
-            print("not found");
-            auto src = random_filename();
-            auto dest = random_filename();
-            {
-                std::ofstream ofs(src);
-                ofs << req.body;
-            }
-            translator.Translate(src, dest);
-            print(dest);
-            convert_file(dest);
-            print("file converted");
-            std::filesystem::copy(dest, translated_file);
-            std::remove(src.c_str());
-            std::remove(dest.c_str());
+        {
+            std::ofstream ofs(TMP_IN);
+            ofs << req.body;
         }
 
-        res.set_file_content(translated_file, content_type);
+        translator.Translate(TMP_IN, TMP_OUT);
+        convert_file(TMP_OUT);
+        res.set_file_content(TMP_OUT, content_type);
     }
 
   public:
     WebServer() {
         if (!std::filesystem::exists(TMP_FOLDER)) std::filesystem::create_directory(TMP_FOLDER);
-        if (!std::filesystem::exists(CACHE_FOLDER)) std::filesystem::create_directory(CACHE_FOLDER);
         m_svr.Post("/translate", [this](const httplib::Request &req, httplib::Response &res) { TranslateHandler(req, res); });
+    }
+
+    ~WebServer() {
+        stop();
     }
 
     void listen() {
@@ -184,6 +167,8 @@ class WebServer {
 
     void stop() {
         m_svr.stop();
+        std::remove(TMP_IN.c_str());
+        std::remove(TMP_OUT.c_str());
     }
 };
 

@@ -24,7 +24,6 @@ RUN xvfb-run -a winetricks -q mfc42 && \
     wine regedit $WINEPREFIX/drive_c/registry.reg && \
     apt remove -y --autoremove --purge xvfb winetricks && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    ln -sf /cache $WINEPREFIX/drive_c/cache && \
     mkdir /tmpfs && ln -sf /tmpfs $WINEPREFIX/drive_c/tmpfs && \
     echo "Sleeping for 15 seconds" && sleep 15
 

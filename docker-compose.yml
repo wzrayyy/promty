@@ -2,8 +2,10 @@ services:
   puppies:
     build: puppy
     ports:
-      - "2390:80"
+      - "127.0.0.1:2000-2030:80"
     stop_signal: SIGINT
+    volumes:
+      - '/dev/shm/mgx-temp:/tmpfs'
     deploy:
       mode: replicated
       replicas: 30
