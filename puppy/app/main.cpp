@@ -11,7 +11,8 @@
 #include "PromtFTManager.hpp"
 
 static inline std::string random_filename(int len = 65) {
-    static const char ASCII_PRINTABLE[] = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    static const char ASCII_PRINTABLE[] =
+        "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     std::random_device random_device;
     std::mt19937 generator(random_device());
     std::uniform_int_distribution distribution(0, static_cast<int>(strlen(ASCII_PRINTABLE) - 1));
@@ -70,7 +71,8 @@ class WebServer {
             else if (target_dir == "ru-en")
                 m_doc.direction(PromtCtlDocument::Direction::kRusEng);
             else {
-                res.set_content("X-Translation-Direction must be one of: [\"en-ru\", \"ru-en\"]", "text/plain");
+                res.set_content("X-Translation-Direction must be one of: [\"en-ru\", \"ru-en\"]",
+                                "text/plain");
                 res.status = 400;
                 return;
             }
@@ -88,8 +90,6 @@ class WebServer {
         PromtFTManager::FileType ft;
         if (content_type == "text/html")
             ft = PromtFTManager::FileType::kHTML;
-        else if (content_type == "text/rtf")
-            ft = PromtFTManager::FileType::kRTF;
         else {
             res.set_content("Can't translate this content type", "text/plain");
             res.status = 400;
@@ -113,7 +113,9 @@ class WebServer {
   public:
     WebServer() {
         if (!std::filesystem::exists(TMP_FOLDER)) std::filesystem::create_directory(TMP_FOLDER);
-        m_svr.Post("/translate", [this](const httplib::Request &req, httplib::Response &res) { TranslateHandler(req, res); });
+        m_svr.Post("/translate", [this](const httplib::Request &req, httplib::Response &res) {
+            TranslateHandler(req, res);
+        });
     }
 
     ~WebServer() {
@@ -133,7 +135,8 @@ class WebServer {
 
 int main() {
     CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    CoInitializeSecurity(0, -1, 0, 0, 1u, 2u, 0, 0, 0); // TODO: make this pretty
+    CoInitializeSecurity(nullptr, -1, nullptr, nullptr, RPC_C_AUTHN_LEVEL_NONE,
+                         RPC_C_IMP_LEVEL_IDENTIFY, nullptr, EOAC_NONE, nullptr);
 
     WebServer ws;
     ws.listen();
