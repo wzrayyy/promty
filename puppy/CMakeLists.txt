@@ -9,10 +9,8 @@ add_executable(${PROJECT_NAME}
     ${sources}
 )
 
-if(UNIX)
-    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
-    target_link_libraries(${PROJECT_NAME} ole32 ws2_32 oleaut32 uuid)
-    target_link_libraries(${PROJECT_NAME} winpthread -static)
-endif()
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+target_link_libraries(${PROJECT_NAME} ole32 ws2_32 oleaut32 uuid)
+target_link_libraries(${PROJECT_NAME} winpthread -static)
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)

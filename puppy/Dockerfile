@@ -16,14 +16,12 @@ ENV WINEPREFIX=/wineprefix \
 RUN sed -i 's/main/main contrib/' /etc/apt/sources.list.d/debian.sources && \
     dpkg --add-architecture i386 && apt-get update &&  \
     apt-get install -y --no-install-recommends \
-    winetricks wine64 wine32:i386 xvfb xauth ca-certificates cabextract && \
-    wineboot -i && echo "Sleeping for 15 seconds..." && sleep 15
+    wine wine64 wine32:i386 ca-certificates && \
+    wineboot -i && echo "Sleeping for 15 seconds..." && sleep 15 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY build/ $WINEPREFIX/drive_c
-RUN xvfb-run -a winetricks -q mfc42 && \
-    wine regedit $WINEPREFIX/drive_c/registry.reg && \
-    apt remove -y --autoremove --purge xvfb winetricks && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+RUN wine regedit $WINEPREFIX/drive_c/registry.reg && \
     mkdir /tmpfs && ln -sf /tmpfs $WINEPREFIX/drive_c/tmpfs && \
     echo "Sleeping for 15 seconds" && sleep 15
 
@@ -33,5 +31,7 @@ COPY --from=builder /build/promt-puppy.exe .
 
 EXPOSE 80/tcp
 VOLUME /cache
+
+ENV WINEDEBUG=-all
 
 CMD exec wine promt-puppy.exe

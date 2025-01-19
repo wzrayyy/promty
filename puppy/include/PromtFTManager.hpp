@@ -10,8 +10,8 @@ const GUID IID_Inknown2 = {0x0, 0x0, 0x0, {0xc0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0
 
 class PromtFTManager : COMWrapper {
   private:
-    void *mInstance = nullptr;
-    static constexpr char mClassname[] = "PromtFTManager";
+    void *m_instance = nullptr;
+    static constexpr char k_classname[] = "PromtFTManager";
 
   public:
     enum class FileType { kHTML = 130, kRTF = 32 };
@@ -20,5 +20,5 @@ class PromtFTManager : COMWrapper {
     PromtFTManager();
     ~PromtFTManager();
     PromtFileTranslator Translator(PromtFTManager::FileType ft, PromtCtlDirection &dir) const;
-    const char* classname() const override { return mClassname; };
+    const char* classname() const override { return k_classname; };
 };

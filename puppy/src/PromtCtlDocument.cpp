@@ -1,7 +1,7 @@
 #include "PromtCtlDocument.hpp"
 
-#include "PromtCtlDirection.hpp"
 #include <windows.h>
+#include "PromtCtlDirection.hpp"
 
 PromtCtlDocument::PromtCtlDocument() {
     void *p_unknown = nullptr;

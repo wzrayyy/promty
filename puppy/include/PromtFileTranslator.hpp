@@ -4,17 +4,21 @@
 #include "COMWrapper.hpp"
 
 class PromtFileTranslator : COMWrapper {
+  friend class PromtFTManager;
+
   private:
-    const void *mInstance = nullptr;
-    const void *mDirection = nullptr;
-    static constexpr char mClassName[] = "PromtFileTranslator";
+    const void *m_instance = nullptr;
+    const void *m_direction = nullptr;
+    static constexpr char k_classname[] = "PromtFileTranslator";
+
+  protected:
+    explicit PromtFileTranslator(const void *instance, const void *direction) : m_instance(instance), m_direction(direction) {};
 
   public:
     PromtFileTranslator() = delete;
-    explicit PromtFileTranslator(const void *instance, const void *direction) : mInstance(instance), mDirection(direction){};
     ~PromtFileTranslator();
     void Translate(const std::string_view src, const std::string_view dest) const;
-    const char* classname() const override {
-        return mClassName;
+    const char *classname() const override {
+        return k_classname;
     };
 };

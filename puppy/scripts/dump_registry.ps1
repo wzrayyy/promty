@@ -902,6 +902,7 @@ $tempfile = "$env:temp\promt.reg"
 
 foreach ($key in $keys) {
     reg export $key $tempfile /y > $null
+    echo "Exporting `"$key`""
     $content = Get-Content -Path $tempfile | Select-Object -Skip 2
     $dump += ($content -join "`n") + "`n`n"
 }

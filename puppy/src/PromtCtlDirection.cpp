@@ -1,7 +1,6 @@
 #include "PromtCtlDirection.hpp"
 
 #include <string>
-#include <utility>
 #include <windows.h>
 
 const char *PromtCtlDirection::classname() const {
