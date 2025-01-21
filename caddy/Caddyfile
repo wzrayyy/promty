@@ -1,10 +1,35 @@
-https://, ядро.орг, *.ядро.орг {
-	tls internal
-    encode gzip zstd
-
-    import Caddyfile.yadro localhost:8000
+{
+    cache
+    log {
+        format console
+        level WARN
+    }
 }
 
-http://localhost:9000 {
-    import Caddyfile.puppies localhost:9001-9010
+http://ядро.орг, http://*.ядро.орг {
+    tls internal
+    encode gzip zstd
+
+    cache {
+        # we don't want to flood the upstream from the same IP
+        mode bypass
+        ttl 30m
+    }
+
+    import Caddyfile.yadro proxy:80
+}
+
+:9000 {
+    reverse_proxy {
+        dynamic a puppy 80
+        lb_policy least_conn
+    }
+
+    cache {
+        allowed_http_verbs POST
+        ttl 7d
+        timeout {
+            backend 1m
+        }
+    }
 }

@@ -3,14 +3,14 @@ services:
     networks:
       - promty
     build: puppy
-    ports:
-      - "127.0.0.1:9000-9002:80"
+    hostname: puppy
     stop_signal: SIGINT
     volumes:
       - /dev/shm/puppy-temp:/tmpfs
+      - ./cache:/cache
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1
       endpoint_mode: vip
 
   proxy:
@@ -23,7 +23,7 @@ services:
     networks:
       - promty
     container_name: caddy
-    image: caddy:2.8-alpine
+    build: caddy
     volumes:
       - ./caddy:/etc/caddy
     ports:
