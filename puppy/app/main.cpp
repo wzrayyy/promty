@@ -4,15 +4,9 @@
 #include <fstream>
 #include <iostream>
 #include <mutex>
-#include <random>
 
 #include "PromtCtlDocument.hpp"
 #include "PromtFTManager.hpp"
-
-template<typename... T>
-static inline void print(T... args) {
-    ((std::cout << args <<  ' '), ...) << std::endl;
-}
 
 static inline std::string random_filename(int len = 65) {
     static const char ASCII_PRINTABLE[] = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -26,9 +20,14 @@ static inline std::string random_filename(int len = 65) {
     return random_string;
 }
 
-static const char TMP_FOLDER[] = "C:\\tmpfs\\";
+static constexpr std::string TMP_FOLDER = "C:\\tmpfs\\";
 static const auto TMP_IN = TMP_FOLDER + random_filename();
 static const auto TMP_OUT = TMP_FOLDER + random_filename();
+
+template<typename... T>
+static inline void print(T... args) {
+    ((std::cout << args <<  ' '), ...) << std::endl;
+}
 
 static inline auto utf8_to_cp(const char *data) {
     int size = MultiByteToWideChar(CP_UTF8, 0, data, -1, 0, 0);
@@ -86,7 +85,7 @@ class WebServer {
             ofs << utf8_to_cp(text.c_str());
         }
         translator.Translate(TMP_IN, TMP_OUT);
-        res.set_content(read_file(TMP_OUT), "text/html");
+        res.set_content(std::move(read_file(TMP_OUT)), "text/html");
     }
 
     void TranslateText(const std::string &text, httplib::Response &res) {
@@ -146,8 +145,12 @@ class WebServer {
         if (!std::filesystem::exists(TMP_FOLDER)) std::filesystem::create_directory(TMP_FOLDER);
 
         m_svr.Post("/translate", [this](const httplib::Request &req, httplib::Response &res) {
-            print("Got request!");
             TranslateHandler(req, res);
+        });
+
+        m_svr.Get("/health", [](const httplib::Request &req, httplib::Response &res) {
+            res.set_content("OK", "text/plain");
+            res.status = 200;
         });
     }
 
