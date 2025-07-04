@@ -25,7 +25,7 @@
 линукс.ядро.орг linux.kernel.org
 саял.ядро.орг lkml.kernel.org
 уздечка.ядро.орг lore.kernel.org
-почта.ядро.орг mail.kernel.org
+кольчуга.ядро.орг mail.kernel.org
 социальные.сми.ядро.орг media.social.kernel.org
 край.зеркал.ядро.орг mirrors.edge.kernel.org
 зеркала.ядро.орг mirrors.kernel.org
@@ -33,7 +33,7 @@
 уздечка.сппн.ядро.орг nntp.lore.kernel.org
 нью-йоркские.зеркала.ядро.орг ny.mirrors.kernel.org
 источник.нук.ядро.орг nyc.source.kernel.org
-клавиатура.ядро.орг pad.kernel.org
+прокладка.ядро.орг pad.kernel.org
 доктора.париж.ядро.орг parisc.docs.kernel.org
 путаница.ядро.орг patchwork.kernel.org
 люди.ядро.орг people.kernel.org
@@ -43,13 +43,13 @@
 источник.греха.ядро.орг sin.source.kernel.org
 пппп.ядро.орг smtp.kernel.org
 уздечка.пппп.ядро.орг smtp.lore.kernel.org
-подместо.пппп.ядро.орг smtp.subspace.kernel.org
+подпространство.пппп.ядро.орг smtp.subspace.kernel.org
 пппп1.ядро.орг smtp1.kernel.org
 пппп2.ядро.орг smtp2.kernel.org
 пппп3.ядро.орг smtp3.kernel.org
-социальный.ядро.орг social.kernel.org
+социальное.ядро.орг social.kernel.org
 редкие.доктора.ядро.орг sparse.docs.kernel.org
-подместо.ядро.орг subspace.kernel.org
+подпространство.ядро.орг subspace.kernel.org
 зеркала.резюме.ядро.орг sv.mirrors.kernel.org
 сай.отражает.ядро.орг sy.mirrors.kernel.org
 мпук.ядро.орг vger.kernel.org
