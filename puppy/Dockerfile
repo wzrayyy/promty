@@ -6,12 +6,16 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteracive apt-get install -y \
     apt-get clean && rm -rf /var/lib/apt/lists/*;
 
 WORKDIR /build
+
+COPY app/healthcheck.cpp app/healthcheck.cpp
+COPY include/httplib.hpp include/httplib.hpp
+RUN g++ -o healthcheck -I./include ./app/healthcheck.cpp;
+
 COPY app app
 COPY include include
 COPY src src
 COPY CMakeLists.txt .
 
-RUN g++ -o healthcheck -I./include ./app/healthcheck.cpp;
 
 RUN --mount=type=cache,target=cmake-build cmake -B cmake-build \
     -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++ && cmake --build cmake-build -j$(nproc) && \
@@ -38,6 +42,7 @@ HEALTHCHECK CMD ./healthcheck;
 
 EXPOSE 80/tcp
 VOLUME /cache
+STOPSIGNAL SIGINT
 
 COPY docker-entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

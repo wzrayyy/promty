@@ -1,6 +1,4 @@
-.cache/
-/test
 build/
-cache/
+.cache/
 cmake-build*/
 compile_commands.json

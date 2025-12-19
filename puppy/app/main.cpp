@@ -1,8 +1,11 @@
 #include "httplib.hpp"
 
+#include <csignal>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <iostream>
+#include <locale>
 #include <mutex>
 
 #include "PromtCtlDocument.hpp"
@@ -10,9 +13,9 @@
 
 static inline std::string random_filename(int len = 65) {
     static const char ASCII_PRINTABLE[] = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    std::random_device random_device;
-    std::mt19937 generator(random_device());
-    std::uniform_int_distribution distribution(0, static_cast<int>(strlen(ASCII_PRINTABLE) - 1));
+    static std::random_device random_device;
+    static std::mt19937 generator(random_device());
+    static std::uniform_int_distribution distribution(0, static_cast<int>(strlen(ASCII_PRINTABLE) - 1));
     std::string random_string;
     random_string.reserve(len);
     for (int i = 0; i < len; ++i)
@@ -61,11 +64,20 @@ static inline auto read_file(const std::string &filename) {
 
     size = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, 0, 0);
     std::string out;
-    out.resize(size);
-    WideCharToMultiByte(CP_UTF8, 0, wstr, -1, out.data(), size, 0, 0);
+    out.resize(size - 1);
+    WideCharToMultiByte(CP_UTF8, 0, wstr, -1, out.data(), size - 1, 0, 0);
     delete[] wstr;
 
-    return out;
+    std::string out_lf;
+    out_lf.reserve(out.size());
+
+    for (auto c : out) {
+        if (c == '\r')
+            continue;
+        out_lf.push_back(c);
+    }
+
+    return out_lf;
 }
 
 class WebServer {
@@ -160,7 +172,7 @@ class WebServer {
     }
 
     void listen(const char *host = "0.0.0.0", unsigned short port = 80) {
-        print("Started!");
+        print("started!");
         m_svr.listen(host, port);
     }
 
@@ -171,12 +183,21 @@ class WebServer {
     }
 };
 
-int main() {
-    print("Starting...");
+static std::function<void(int)> signal_action;
 
+void signal_handler(int signal) {
+    signal_action(signal);
+}
+
+int main() {
     CoInitializeEx(NULL, COINIT_MULTITHREADED);
     CoInitializeSecurity(nullptr, -1, nullptr, nullptr, RPC_C_AUTHN_LEVEL_NONE, RPC_C_IMP_LEVEL_IDENTIFY, nullptr, EOAC_NONE, nullptr);
 
     WebServer ws;
+
+    signal_action = [&](int x) { ws.stop(); };
+    std::signal(SIGTERM, signal_handler);
+    std::signal(SIGINT, signal_handler);
+
     ws.listen();
 }
