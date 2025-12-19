@@ -23,6 +23,7 @@ func main() {
 
 			// We only support gzip decoding
 			r.Out.Header.Set("Accept-Encoding", "gzip")
+			r.Out.Header.Set("User-Agent", "ядро.орг/1.0")
 		},
 		ModifyResponse: func(r *http.Response) error {
 			// Disable security policy because of the domain restrictions.
