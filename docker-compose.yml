@@ -4,14 +4,14 @@ services:
       - promty
     build: puppy
     hostname: puppy
-    stop_signal: SIGINT
     volumes:
       - /dev/shm/puppy-temp:/tmpfs
-      - ./cache:/cache
     deploy:
       mode: replicated
       replicas: 1
       endpoint_mode: vip
+      update_config:
+        order: start-first
 
   proxy:
     networks:

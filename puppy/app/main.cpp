@@ -142,7 +142,8 @@ class WebServer {
 
   public:
     WebServer() {
-        if (!std::filesystem::exists(TMP_FOLDER)) std::filesystem::create_directory(TMP_FOLDER);
+        if (!std::filesystem::exists(TMP_FOLDER))
+            std::filesystem::create_directory(TMP_FOLDER);
 
         m_svr.Post("/translate", [this](const httplib::Request &req, httplib::Response &res) {
             TranslateHandler(req, res);
@@ -159,6 +160,7 @@ class WebServer {
     }
 
     void listen(const char *host = "0.0.0.0", unsigned short port = 80) {
+        print("Started!");
         m_svr.listen(host, port);
     }
 

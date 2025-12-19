@@ -1,15 +1,16 @@
 #include "COMWrapper.hpp"
 
 #include <cstdio>
-#include <stdexcept>
 #include <windows.h>
+#include <comdef.h>
 
 void COMWrapper::Raise(const HRESULT hr, const char *const ctx) const {
     if (hr != 0) {
-        char msg[128];
-        snprintf(msg, 128, "[%s] Non-zero HRESULT value: 0x%x at: %s\n", classname(), hr, ctx);
-        printf(msg);
-        throw std::runtime_error(msg);
+        char msg[1024];
+        _com_error err(hr);
+        snprintf(msg, 1024, "[%s] Error: %s (0x%lx) at: %s\n", classname(), err.ErrorMessage(), hr, ctx);
+        printf("%s\n", msg);
+        exit(1);
     }
 }
 
