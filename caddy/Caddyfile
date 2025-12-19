@@ -28,6 +28,11 @@ http://ядро.орг, http://*.ядро.орг {
     cache {
         allowed_http_verbs POST
         ttl 7d
+
+        key {
+            headers X-Translation-Direction
+        }
+
         timeout {
             backend 1m
         }
