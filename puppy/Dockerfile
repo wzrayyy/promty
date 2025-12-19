@@ -8,7 +8,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteracive apt-get install -y \
 WORKDIR /build
 
 COPY app/healthcheck.cpp app/healthcheck.cpp
-COPY include/httplib.hpp include/httplib.hpp
+COPY include/http include/http
 RUN g++ -o healthcheck -I./include ./app/healthcheck.cpp;
 
 COPY app app

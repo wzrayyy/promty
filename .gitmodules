@@ -1,0 +1,3 @@
+[submodule "puppy/include/http"]
+	path = puppy/include/http
+	url = https://github.com/yhirose/cpp-httplib
