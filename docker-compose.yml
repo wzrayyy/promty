@@ -8,7 +8,7 @@ services:
       - /dev/shm/puppy-temp:/tmpfs
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 3
       endpoint_mode: vip
       update_config:
         order: start-first
@@ -28,6 +28,7 @@ services:
       - ./caddy:/etc/caddy
     ports:
       - 80:80
+      - 9000:9000
 
 networks:
   promty:

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+translated="$(curl -s \
+    http://localhost:9000/translate \
+    -H 'Content-Type: text/html' \
+    --data-binary @- -o- < <(sed 's,^fix:,доза:,' < "$1") | \
+        tail -n +2 | \
+        perl -pe 's,<SPAN CLASS=UNKNOWN_WORD>(.*?)</SPAN>,\1,g')"
+
+[ -n "$translated" ] && echo "$translated" > "$1"
