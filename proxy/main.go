@@ -68,7 +68,7 @@ func main() {
 						return original_raw
 					}
 
-					return []byte("http://" + yadro + "/") // TODO: https
+					return []byte("https://" + yadro + "/")
 				})))
 			}
 
@@ -88,7 +88,7 @@ func main() {
 	http.ListenAndServe("0.0.0.0:80", proxy)
 }
 
-func replaceDomains(response []byte) []byte {
+func replaceDomains(response string) string {
 	re := regexp.MustCompile(`(?i)[A-Za-z\-\.]*\.?kernel\.org[^\s"'<>]*`)
 	urlFixer := strings.NewReplacer(
 		"%3F", "?",
@@ -96,8 +96,8 @@ func replaceDomains(response []byte) []byte {
 		"%26", "&",
 	)
 
-	response = re.ReplaceAllFunc(response, func(original_raw []byte) []byte {
-		kernel := strings.ToLower(string(original_raw))
+	response = re.ReplaceAllStringFunc(response, func(original_raw string) string {
+		kernel := strings.ToLower(original_raw)
 
 		// Promt mangles ? and & in urls
 		kernel = urlFixer.Replace(kernel)
@@ -105,45 +105,60 @@ func replaceDomains(response []byte) []byte {
 		// Strip `www.`
 		kernel = strings.TrimPrefix(kernel, "www.")
 
-		yadro, exists := Kernel2Yadro(kernel)
+		split := strings.SplitN(kernel, "/", 2)
+
+		yadro, exists := Kernel2Yadro(split[0])
 
 		if !exists {
 			fmt.Println("Missing:", kernel)
 			return original_raw
 		}
 
-		return []byte(yadro)
+		rest := ""
+		if len(split) > 1 {
+			rest = "/" + split[1]
+		}
+
+		return yadro + rest
 	})
 
 	return response
 }
 
-func translateWithPromtPuppies(response []byte) []byte {
+func translateWithPromtPuppies(response string) string {
 	// Don't try to translate empty body (30x, etc)
 	if len(response) == 0 {
 		return response
 	}
 
-	req, _ := http.NewRequest("POST", "http://caddy:9000/translate", bytes.NewReader(response))
+	req, _ := http.NewRequest("POST", "http://caddy:9000/translate", strings.NewReader(response))
 
 	req.Header.Add("Content-Type", "text/html")
 
 	resp, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error in first", err)
-		return []byte{0}
+		fmt.Fprintln(os.Stderr, "Error in while translating", err)
+		return ""
 	}
 
-	response, _ = io.ReadAll(resp.Body)
-
+	var translated strings.Builder
+	io.Copy(&translated, resp.Body)
 	resp.Body.Close()
 
-	return response
+	return translated.String()
+}
+
+func enfunnify(response string) string {
+	return strings.NewReplacer(
+		"tarball", "tar ball",
+	).Replace(response)
 }
 
 func modifyResponse(response []byte) []byte {
-	response = translateWithPromtPuppies(response)
-	response = replaceDomains(response)
-	return response
+	s := string(response)
+	s = enfunnify(s)
+	s = translateWithPromtPuppies(s)
+	s = replaceDomains(s)
+	return []byte(s)
 }

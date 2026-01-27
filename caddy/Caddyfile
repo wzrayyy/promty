@@ -23,6 +23,12 @@ http://ядро.орг, http://*.ядро.орг {
     reverse_proxy {
         dynamic a puppy 80
         lb_policy least_conn
+
+        transport http {
+            response_header_timeout 10m
+            read_timeout 10m
+            write_timeout 10m
+        }
     }
 
     cache {
@@ -34,7 +40,7 @@ http://ядро.орг, http://*.ядро.орг {
         }
 
         timeout {
-            backend 1m
+            backend 10m
         }
     }
 }

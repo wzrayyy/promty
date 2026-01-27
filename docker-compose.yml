@@ -1,7 +1,6 @@
 services:
   puppies:
-    networks:
-      - promty
+    networks: [promty]
     build: puppy
     hostname: puppy
     volumes:
@@ -14,15 +13,15 @@ services:
         order: start-first
 
   proxy:
-    networks:
-      - promty
+    networks: [promty]
     container_name: proxy
     build: proxy
-    depends_on: [puppies]
+    depends_on:
+      puppies:
+        condition: service_healthy
 
   caddy:
-    networks:
-      - promty
+    networks: [promty]
     container_name: caddy
     build: caddy
     volumes:
