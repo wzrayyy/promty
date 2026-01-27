@@ -21,3 +21,5 @@ winetricks_init
 winetricks_vcrun6_helper
 w_try_cabextract "${W_CACHE}"/vcrun6/vcredist.exe -d "$SCRIPT_DIR/build/windows/" -F "mfc42*.dll"
 mkdir -p "$SCRIPT_DIR/build/windows/system32"
+
+date +'%s' > "$SCRIPT_DIR/build/build-date"

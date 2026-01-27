@@ -1,14 +1,56 @@
 #include "http/httplib.h"
 
 #include <csignal>
+#include <cstdint>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <mutex>
+#include <windows.h>
+#include <winternl.h>
 
 #include "PromtCtlDocument.hpp"
 #include "PromtFTManager.hpp"
+
+#define EPOCH_DIFF 116444736000000000LL
+#define TICKS_PER_SEC 10000000LL
+
+static LARGE_INTEGER fake_time;
+
+static NTSTATUS WINAPI HookedNtQuerySystemTime(PLARGE_INTEGER time)
+{
+    if (time)
+        time->QuadPart = fake_time.QuadPart;
+
+    fake_time.QuadPart += TICKS_PER_SEC;
+    return 0;
+}
+
+static void InstallTimeHook()
+{
+    HMODULE ntdll = GetModuleHandleA("ntdll.dll");
+    if (!ntdll)
+        return;
+
+    auto target = (BYTE *)GetProcAddress(ntdll, "NtQuerySystemTime");
+    if (!target)
+        return;
+
+    DWORD old;
+    VirtualProtect(target, 5, PAGE_EXECUTE_READWRITE, &old);
+
+    intptr_t rel = (BYTE *)HookedNtQuerySystemTime - target - 5;
+    target[0] = 0xE9; // jmp rel32
+    *(int32_t *)(target + 1) = (int32_t)rel;
+
+    VirtualProtect(target, 5, old, &old);
+
+    const char *env = std::getenv("FAKETIME");
+    long long unix_ts = env ? std::strtoll(env, nullptr, 10) : 0;
+    fake_time.QuadPart = unix_ts * TICKS_PER_SEC + EPOCH_DIFF;
+}
 
 static inline std::string random_filename(int len = 65) {
     static const char ASCII_PRINTABLE[] = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -189,6 +231,8 @@ void signal_handler(int signal) {
 }
 
 int main() {
+    InstallTimeHook();
+
     CoInitializeEx(NULL, COINIT_MULTITHREADED);
     CoInitializeSecurity(nullptr, -1, nullptr, nullptr, RPC_C_AUTHN_LEVEL_NONE, RPC_C_IMP_LEVEL_IDENTIFY, nullptr, EOAC_NONE, nullptr);
 

@@ -16,7 +16,6 @@ COPY include include
 COPY src src
 COPY CMakeLists.txt .
 
-
 RUN --mount=type=cache,target=cmake-build cmake -B cmake-build \
     -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++ && cmake --build cmake-build -j$(nproc) && \
     cp cmake-build/promt-puppy.exe .;
