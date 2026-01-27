@@ -107,10 +107,6 @@ func replaceDomains(response []byte) []byte {
 		return []byte(yadro)
 	})
 
-	response = bytes.ReplaceAll(response, []byte("%3F"), []byte("?"))
-	response = bytes.ReplaceAll(response, []byte("%26"), []byte("&"))
-	response = bytes.ReplaceAll(response, []byte("https"), []byte("http")) // TODO: TEMP
-
 	return response
 }
 
@@ -139,7 +135,7 @@ func translateWithPromtPuppies(response []byte) []byte {
 }
 
 func modifyResponse(response []byte) []byte {
-	response = translateWithPromtPuppies(response)
 	response = replaceDomains(response)
+	response = translateWithPromtPuppies(response)
 	return response
 }
