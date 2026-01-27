@@ -18,6 +18,7 @@ services:
       - promty
     container_name: proxy
     build: proxy
+    depends_on: [puppies]
 
   caddy:
     networks:
@@ -26,6 +27,7 @@ services:
     build: caddy
     volumes:
       - ./caddy:/etc/caddy
+    depends_on: [proxy]
     ports:
       - 80:80
       - 9000:9000
