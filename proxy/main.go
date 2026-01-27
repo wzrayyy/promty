@@ -89,10 +89,18 @@ func main() {
 }
 
 func replaceDomains(response []byte) []byte {
-	re := regexp.MustCompile(`(?i)[A-Za-z\-\.]*\.?kernel\.org`)
+	re := regexp.MustCompile(`(?i)[A-Za-z\-\.]*\.?kernel\.org[^\s"'<>]*`)
+	urlFixer := strings.NewReplacer(
+		"%3F", "?",
+		"%3f", "?",
+		"%26", "&",
+	)
 
 	response = re.ReplaceAllFunc(response, func(original_raw []byte) []byte {
 		kernel := strings.ToLower(string(original_raw))
+
+		// Promt mangles ? and & in urls
+		kernel = urlFixer.Replace(kernel)
 
 		// Strip `www.`
 		kernel = strings.TrimPrefix(kernel, "www.")
@@ -135,7 +143,7 @@ func translateWithPromtPuppies(response []byte) []byte {
 }
 
 func modifyResponse(response []byte) []byte {
-	response = replaceDomains(response)
 	response = translateWithPromtPuppies(response)
+	response = replaceDomains(response)
 	return response
 }
